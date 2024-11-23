@@ -70,3 +70,6 @@ fp-info-cache
 *.csv
 *.pdf
 gerbers
+*.gbr
+*.gbrjob
+*.drl
