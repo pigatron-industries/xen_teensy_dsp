@@ -2,6 +2,7 @@
 
 void SamplePlayerInterface::init() {
     page.addComponent(&title);
+    page.addComponent(&sampleFile);
 
     page.setContext(&Hardware::hw.display);
     page.layout();
@@ -13,6 +14,14 @@ void SamplePlayerInterface::init() {
 void SamplePlayerInterface::render() {
     Hardware::hw.display.clear();
     page.render();
+}
+
+void SamplePlayerInterface::focusSampleFile() {
+    focusManager.setFocus(&sampleFile);
+}
+
+void SamplePlayerInterface::setSampleFile(const char* filename) {
+    sampleFile.setValue(filename);
 }
 
 void SamplePlayerInterface::showMessage(const char* message) {

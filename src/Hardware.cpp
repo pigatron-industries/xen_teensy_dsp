@@ -9,6 +9,7 @@ void Hardware::init() {
 
     display.init();
     fsSamples.init();
+    soundFontManager.init();
 
     AudioMemory(10);
     Hardware::hw.sgtl5000_1.enable();
