@@ -84,6 +84,7 @@ class SoundFont {
 
         int addSample(const Sample& sample);
 
+        int getPresetCount() { return presets.size(); }
         Preset* getPreset(int number);
         Instrument* getInstrument(int index);
         Sample* getSample(int index);

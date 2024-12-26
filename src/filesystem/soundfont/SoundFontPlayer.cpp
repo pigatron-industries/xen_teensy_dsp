@@ -15,12 +15,14 @@ void SoundFontPlayer::setSoundFont(SoundFont* soundFont, int preset) {
     this->preset = soundFont->getPreset(preset);
 }
 
+void SoundFontPlayer::setPreset(int preset) {
+    player[LEFT].stop();
+    player[RIGHT].stop();
+    this->preset = soundFont->getPreset(preset);
+}
+
 
 void SoundFontPlayer::trigger(float velocity, float frequency) {
-    Serial.println("SoundFontPlayer::trigger");
-    Serial.println(velocity);
-    Serial.println(frequency);
-
     if (soundFont == nullptr || preset == nullptr) {
         return;
     }
@@ -28,8 +30,6 @@ void SoundFontPlayer::trigger(float velocity, float frequency) {
     for (int i = 0; i < preset->zones.size(); i++) {
         SoundFont::PresetZone& zone = preset->zones[i];
         if (zoneMatches(zone, velocity, frequency)) {
-            Serial.println("zone.instrumentIndex");
-            Serial.println(zone.instrumentIndex);
             SoundFont::Instrument* instrument = soundFont->getInstrument(zone.instrumentIndex);
             if (instrument != nullptr) {
                 for (int j = 0; j < instrument->zones.size(); j++) {
@@ -56,6 +56,14 @@ void SoundFontPlayer::trigger(float velocity, float frequency) {
                 }
             }
         }
+    }
+}
+
+
+void SoundFontPlayer::setFrequency(float frequency) {
+    player[LEFT].setFrequency(frequency);
+    if(stereo) {
+        player[RIGHT].setFrequency(frequency);
     }
 }
 

@@ -9,8 +9,10 @@ class SoundFontPlayer {
         void init(float sampleRate);
 
         void setSoundFont(SoundFont* soundFont, int preset);
+        void setPreset(int preset);
 
         void trigger(float velocity, float frequency);
+        void setFrequency(float frequency);
         void process();
         float* getOutput() { return output; }
 

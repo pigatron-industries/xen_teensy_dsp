@@ -8,15 +8,21 @@ void SamplePlayerController::init(float sampleRate) {
     Controller::init(sampleRate);
     player.init(sampleRate);
     configParam(Parameter::SAMPLEFILE, 0, Hardware::hw.soundFontManager.getFileCount()-1, false);
+    configParam(Parameter::PRESET, 0, 0, true);
+    configParam(Parameter::PITCH_MODE, PitchMode::MONO_FIXED, PitchMode::MONO_BEND, true);
     interface.init();
     interface.focusSampleFile();
+    interface.setMode(getParameterValue(Parameter::PITCH_MODE));
+
     init();
 
     if(Hardware::hw.soundFontManager.getFileCount() == 0) {
         interface.showMessage("No samples");
     } else {
-        loadSampleFile(parameters[Parameter::SAMPLEFILE].value);
+        loadSampleFile(getParameterValue(Parameter::SAMPLEFILE));
+        player.setPreset(getParameterValue(Parameter::PRESET));
     }
+    
 }
 
 void SamplePlayerController::init() {
@@ -32,6 +38,12 @@ int SamplePlayerController::cycleParameter(int amount) {
         case Parameter::SAMPLEFILE:
             interface.focusSampleFile();
             break;
+        case Parameter::PRESET:
+            interface.focusPreset();
+            break;
+        case Parameter::PITCH_MODE:
+            interface.focusMode();
+            break;
     }
 
     return parameters.getSelectedIndex(); 
@@ -44,6 +56,15 @@ void SamplePlayerController::cycleValue(int amount) {
         case Parameter::SAMPLEFILE: {
             FileInfo& file = Hardware::hw.soundFontManager.getFileInfo(value);
             interface.setSampleFile(file.filename);
+            break;
+        }
+        case Parameter::PRESET: {
+            player.setPreset(value);
+            interface.setPreset(value);
+            break;
+        }
+        case Parameter::PITCH_MODE: {
+            interface.setMode(value);
             break;
         }
     }
@@ -71,13 +92,16 @@ void SamplePlayerController::loadSampleFile(int index) {
     Serial.println("SamplePlayerController::loadSampleFile");
     interface.showMessage("Loading");
     soundFont = &Hardware::hw.soundFontManager.loadSoundFont(index);
+    configParam(Parameter::PRESET, 0, soundFont->getPresetCount()-1, true);
+    parameters[Parameter::PRESET].setValue(0);
 
     soundFont->print();
     
     interface.setSampleFile(soundFont->getName());
+    interface.setPreset(0);
     interface.render();
 
-    player.setSoundFont(soundFont, 0); //TODO select preset
+    player.setSoundFont(soundFont, 0);
 }
 
 
@@ -89,7 +113,10 @@ void SamplePlayerController::update() {
             velocityInput.update();
             player.trigger(velocityInput.getValue(), pitchInput.getValue());
         }
+    } else if (getParameterValue(Parameter::PITCH_MODE) == PitchMode::MONO_BEND && pitchInput.update()) {
+        player.setFrequency(pitchInput.getValue());
     }
+
     
 }
 

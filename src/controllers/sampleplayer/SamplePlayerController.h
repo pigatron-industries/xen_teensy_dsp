@@ -8,13 +8,21 @@
 #include <Audio.h>
 #include <eurorack_dsp.h>
 
-#define PARAMETERS 1
+#define PARAMETERS 3
 
 
 class SamplePlayerController : public ParameterizedController<PARAMETERS> {
     public:
         enum Parameter {
-            SAMPLEFILE
+            SAMPLEFILE,
+            PRESET,
+            PITCH_MODE
+        };
+
+        enum PitchMode {
+            MONO_FIXED,
+            MONO_BEND,
+            POLY
         };
 
         SamplePlayerController() : ParameterizedController() {}
